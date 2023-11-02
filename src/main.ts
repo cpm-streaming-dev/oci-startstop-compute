@@ -4,7 +4,6 @@ import { config } from 'dotenv';
 import Oci from './oci';
 import { common, core } from 'oci-sdk';
 import { getListInstances } from './libs/getListInstances';
-import { readFileSync } from 'fs';
 
 config();
 
@@ -74,8 +73,12 @@ router.get('/status', async (ctx: Koa.Context) => {
 });
 
 router.get('/test', async (ctx: Koa.Context) => {
-  const res = readFileSync('./README.md', 'utf8');
-  const sgInstances = res
+  const res = await fetch(
+    'https://raw.githubusercontent.com/cpm-streaming-dev/oci-startstop-compute/master/README.md'
+  );
+
+  const text = await res.text();
+  const sgInstances = text
     .split('\n')
     .filter((line) => line.startsWith('- '))
     .map((line) => line.split('- ')[1]);
