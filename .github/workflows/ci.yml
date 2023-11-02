@@ -28,4 +28,4 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Check line endings
         run: |
-          !( grep -e '^-.*' README.md | grep -ve 'ocid?')
+          !( grep -e '^-.*' README.md | grep -vE 'ocid?')

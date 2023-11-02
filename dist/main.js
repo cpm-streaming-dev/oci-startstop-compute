@@ -25,6 +25,7 @@ const dotenv_1 = require("dotenv");
 const oci_1 = __importDefault(require("./oci"));
 const oci_sdk_1 = require("oci-sdk");
 const getListInstances_1 = require("./libs/getListInstances");
+const fs_1 = require("fs");
 (0, dotenv_1.config)();
 const port = process.env.PORT || 3000;
 const app = new koa_1.default();
@@ -90,8 +91,7 @@ router.get('/status', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     };
 }));
 router.get('/test', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    const res = yield fetch('https://raw.githubusercontent.com/cpm-streaming-dev/oci-startstop-compute/master/README.md');
-    const text = yield res.text();
+    const text = (0, fs_1.readFileSync)('./README.md', 'utf-8');
     const sgInstances = text
         .split('\n')
         .filter((line) => line.startsWith('- '))
