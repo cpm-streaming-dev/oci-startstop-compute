@@ -3,6 +3,8 @@ import Router from 'koa-router';
 import { config } from 'dotenv';
 import Oci from './oci';
 import { common, core } from 'oci-sdk';
+import { getListInstances } from './libs/getListInstances';
+import { readFileSync } from 'fs';
 
 config();
 
@@ -34,15 +36,15 @@ router.get('/cron', async (ctx: Koa.Context) => {
     });
 
     instanceState?.instance.lifecycleState ===
-    core.models.Instance.LifecycleState.Stopped
+      core.models.Instance.LifecycleState.Stopped
       ? await sgOCI.getComputeClient().instanceAction({
-          instanceId: instance,
-          action: core.requests.InstanceActionRequest.Action.Start,
-        })
+        instanceId: instance,
+        action: core.requests.InstanceActionRequest.Action.Start,
+      })
       : await sgOCI.getComputeClient().instanceAction({
-          instanceId: instance,
-          action: core.requests.InstanceActionRequest.Action.Stop,
-        });
+        instanceId: instance,
+        action: core.requests.InstanceActionRequest.Action.Stop,
+      });
   }
 
   ctx.body = `Process Done. ${new Date().toString()}`;
@@ -70,6 +72,22 @@ router.get('/status', async (ctx: Koa.Context) => {
     instances: instances,
   };
 });
+
+router.get('/test', async (ctx: Koa.Context) => {
+  const res = readFileSync('./README.md', 'utf8');
+  const sgInstances = res
+    .split('\n')
+    .filter((line) => line.startsWith('- '))
+    .map((line) => line.split('- ')[1]);
+
+  const instances2 = await getListInstances("sg");
+
+  const intersection = sgInstances.filter(element => !instances2.includes(element));
+
+
+  console.log(intersection);
+  ctx.body = "test"
+})
 
 app.use(router.routes());
 
