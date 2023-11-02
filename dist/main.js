@@ -24,6 +24,8 @@ const koa_router_1 = __importDefault(require("koa-router"));
 const dotenv_1 = require("dotenv");
 const oci_1 = __importDefault(require("./oci"));
 const oci_sdk_1 = require("oci-sdk");
+const getListInstances_1 = require("./libs/getListInstances");
+const fs_1 = require("fs");
 (0, dotenv_1.config)();
 const port = process.env.PORT || 3000;
 const app = new koa_1.default();
@@ -87,6 +89,17 @@ router.get('/status', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     ctx.body = {
         instances: instances,
     };
+}));
+router.get('/test', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    const res = (0, fs_1.readFileSync)('./README.md', 'utf8');
+    const sgInstances = res
+        .split('\n')
+        .filter((line) => line.startsWith('- '))
+        .map((line) => line.split('- ')[1]);
+    const instances2 = yield (0, getListInstances_1.getListInstances)("sg");
+    const intersection = sgInstances.filter(element => !instances2.includes(element));
+    console.log(intersection);
+    ctx.body = "test";
 }));
 app.use(router.routes());
 app.listen(port, () => {
