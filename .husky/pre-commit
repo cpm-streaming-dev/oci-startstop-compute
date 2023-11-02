@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+pnpm format:write
+pnpm format:check
+pnpm lint:fix
+pnpm lint:check
