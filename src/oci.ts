@@ -13,7 +13,10 @@ class Oci {
   private user = process.env.USER || '';
   private fingerprint = process.env.FINGERPRINT || '';
   private passphrase = process.env.PASSPHRASE || null; // optional parameter
-  private privateKey = Buffer.from(process.env.SECRET_KEY as string, 'base64').toString('utf8');
+  private privateKey = Buffer.from(
+    process.env.SECRET_KEY as string,
+    'base64'
+  ).toString('utf8');
   constructor(region?: common.Region) {
     const provider = new common.SimpleAuthenticationDetailsProvider(
       this.tenancy,
