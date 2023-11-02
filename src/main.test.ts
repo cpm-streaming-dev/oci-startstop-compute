@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app, server } from './main'
+import { app, server } from './main';
 import { getListInstances } from './libs/getListInstances';
 
 it('works', async () => {
@@ -10,11 +10,13 @@ it('works', async () => {
 
 it('Should not contains not exists SG instance', async () => {
   const response = await request(app.callback()).get('/test');
-  const instances = await getListInstances("sg");
+  const instances = await getListInstances('sg');
 
-  JSON.parse(response.text).map((instance: string) => expect(instances).toContain(instance))
-})
+  JSON.parse(response.text).map((instance: string) =>
+    expect(instances).toContain(instance)
+  );
+});
 
 afterAll(() => {
   server.close();
-})
+});
