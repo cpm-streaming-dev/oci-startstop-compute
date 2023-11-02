@@ -19,16 +19,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.server = exports.app = void 0;
 const koa_1 = __importDefault(require("koa"));
 const koa_router_1 = __importDefault(require("koa-router"));
 const dotenv_1 = require("dotenv");
 const oci_1 = __importDefault(require("./oci"));
 const oci_sdk_1 = require("oci-sdk");
-const getListInstances_1 = require("./libs/getListInstances");
 const fs_1 = require("fs");
 (0, dotenv_1.config)();
 const port = process.env.PORT || 3000;
-const app = new koa_1.default();
+exports.app = new koa_1.default();
 const router = new koa_router_1.default();
 router.get('/', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     ctx.body = `Healthy ${new Date().toString()}`;
@@ -91,17 +91,15 @@ router.get('/status', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     };
 }));
 router.get('/test', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    const text = (0, fs_1.readFileSync)('./README.md', 'utf-8');
+    const text = (0, fs_1.readFileSync)('./README.md', 'utf8');
     const sgInstances = text
         .split('\n')
         .filter((line) => line.startsWith('- '))
         .map((line) => line.split('- ')[1]);
-    const instances2 = yield (0, getListInstances_1.getListInstances)("sg");
-    const intersection = sgInstances.filter(element => !instances2.includes(element));
-    console.log(intersection);
-    ctx.body = "test";
+    const instances = sgInstances
+        .map((line) => line.replace('\r', ''));
+    ctx.body = instances;
 }));
-app.use(router.routes());
-app.listen(port, () => {
-    console.log(`Application is running on port ${port}`);
-});
+exports.app.use(router.routes());
+exports.server = exports.app.listen(port);
+console.log(`Application is running on port ${port}`);
