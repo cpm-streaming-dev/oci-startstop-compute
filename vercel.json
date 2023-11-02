@@ -20,7 +20,7 @@
     },
     {
       "path": "/cron",
-      "schedule": "0 0 * * 7"
+      "schedule": "0 0 * * 0"
     }
   ]
 }
