@@ -9,7 +9,7 @@ class Oci {
         this.maxTimeInSeconds = 60 * 60; // The duration for waiter configuration before failing. Currently set to 1 hour.
         this.maxDelayInSeconds = 30; // The max delay for the waiter configuration. Currently set to 30 seconds
         this.tenancy = process.env.TENANCY || '';
-        this.user = process.env.USER || '';
+        this.user = process.env.USERID || '';
         this.fingerprint = process.env.FINGERPRINT || '';
         this.passphrase = process.env.PASSPHRASE || null; // optional parameter
         this.privateKey = Buffer.from(process.env.SECRET_KEY, 'base64').toString('utf8');

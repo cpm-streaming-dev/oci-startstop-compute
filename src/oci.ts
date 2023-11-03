@@ -10,7 +10,7 @@ class Oci {
   private maxTimeInSeconds = 60 * 60; // The duration for waiter configuration before failing. Currently set to 1 hour.
   private maxDelayInSeconds = 30; // The max delay for the waiter configuration. Currently set to 30 seconds
   private tenancy = process.env.TENANCY || '';
-  private user = process.env.USER || '';
+  private user = process.env.USERID || '';
   private fingerprint = process.env.FINGERPRINT || '';
   private passphrase = process.env.PASSPHRASE || null; // optional parameter
   private privateKey = Buffer.from(

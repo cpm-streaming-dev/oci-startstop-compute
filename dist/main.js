@@ -34,6 +34,10 @@ router.get('/', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     ctx.body = `Healthy ${new Date().toString()}`;
 }));
 router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    const authHeader = ctx.request.headers.authorization;
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+        return ctx.throw(401, 'Unauthorized');
+    }
     const res = yield fetch('https://raw.githubusercontent.com/cpm-streaming-dev/oci-startstop-compute/master/README.md');
     const text = yield res.text();
     const sgInstances = text
@@ -53,13 +57,16 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
             })
             : yield sgOCI.getComputeClient().instanceAction({
                 instanceId: instance,
-                action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Stop,
+                action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Softstop,
             });
     }
     ctx.body = `Process Done. ${new Date().toString()}`;
 }));
 router.get('/status', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, e_1, _b, _c;
+    if (ctx.get('x-api-key') !== process.env.API_KEY) {
+        ctx.throw(401, 'Unauthorized');
+    }
     const instances = [];
     const region = ctx.query.region === 'tokyo'
         ? oci_sdk_1.common.Region.AP_TOKYO_1
@@ -96,8 +103,7 @@ router.get('/test', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         .split('\n')
         .filter((line) => line.startsWith('- '))
         .map((line) => line.split('- ')[1]);
-    const instances = sgInstances
-        .map((line) => line.replace('\r', ''));
+    const instances = sgInstances.map((line) => line.replace('\r', ''));
     ctx.body = instances;
 }));
 exports.app.use(router.routes());

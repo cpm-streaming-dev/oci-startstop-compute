@@ -1,0 +1,43 @@
+name: Tests
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node: ['16.x', '18.x']
+        os: [ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run tests
+        env:
+          TENANCY: ${{ secrets.TENANCY }}
+          USERID: ${{ secrets.USERID }}
+          FINGERPRINT: ${{ secrets.FINGERPRINT }}
+          PASSPHRASE: ${{secrets.PASSPHRASE }}
+          COMPARTMENTID: ${{ secrets.COMPARTMENTID }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          API_KEY: ${{ secrets.APIKEY }}
+        run: pnpm test
