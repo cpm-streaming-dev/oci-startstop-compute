@@ -40,15 +40,15 @@ router.get('/cron', async (ctx: Koa.Context) => {
     });
 
     instanceState?.instance.lifecycleState ===
-    core.models.Instance.LifecycleState.Stopped
+      core.models.Instance.LifecycleState.Stopped
       ? await sgOCI.getComputeClient().instanceAction({
-          instanceId: instance,
-          action: core.requests.InstanceActionRequest.Action.Start,
-        })
+        instanceId: instance,
+        action: core.requests.InstanceActionRequest.Action.Start,
+      })
       : await sgOCI.getComputeClient().instanceAction({
-          instanceId: instance,
-          action: core.requests.InstanceActionRequest.Action.Softstop,
-        });
+        instanceId: instance,
+        action: core.requests.InstanceActionRequest.Action.Softstop,
+      });
   }
 
   ctx.body = `Process Done. ${new Date().toString()}`;
@@ -81,6 +81,9 @@ router.get('/status', async (ctx: Koa.Context) => {
 });
 
 router.get('/task', async (ctx: Koa.Context) => {
+  if (ctx.get('x-api-key') !== process.env.API_KEY) {
+    ctx.throw(401, 'Unauthorized');
+  }
   const { region, instanceId, action } = ctx.query;
   const mapRegion =
     region === 'tokyo'
@@ -95,9 +98,9 @@ router.get('/task', async (ctx: Koa.Context) => {
   !instances.includes(instanceId as string)
     ? ctx.throw(400, 'Instance Not Found Please check the instance id')
     : await oci.getComputeClient().instanceAction({
-        instanceId: instanceId as string,
-        action: mapAction,
-      });
+      instanceId: instanceId as string,
+      action: mapAction,
+    });
 
   ctx.body = 'Process Done';
 });
