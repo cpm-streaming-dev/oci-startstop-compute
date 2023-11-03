@@ -19,7 +19,7 @@ router.get('/', async (ctx: Koa.Context) => {
 router.get('/cron', async (ctx: Koa.Context) => {
   const authHeader = ctx.request.headers.authorization;
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return ctx.throw(401, 'Unauthorized')
+    return ctx.throw(401, 'Unauthorized');
   }
   const res = await fetch(
     'https://raw.githubusercontent.com/cpm-streaming-dev/oci-startstop-compute/master/README.md'
@@ -39,15 +39,15 @@ router.get('/cron', async (ctx: Koa.Context) => {
     });
 
     instanceState?.instance.lifecycleState ===
-      core.models.Instance.LifecycleState.Stopped
+    core.models.Instance.LifecycleState.Stopped
       ? await sgOCI.getComputeClient().instanceAction({
-        instanceId: instance,
-        action: core.requests.InstanceActionRequest.Action.Start,
-      })
+          instanceId: instance,
+          action: core.requests.InstanceActionRequest.Action.Start,
+        })
       : await sgOCI.getComputeClient().instanceAction({
-        instanceId: instance,
-        action: core.requests.InstanceActionRequest.Action.Softstop,
-      });
+          instanceId: instance,
+          action: core.requests.InstanceActionRequest.Action.Softstop,
+        });
   }
 
   ctx.body = `Process Done. ${new Date().toString()}`;
