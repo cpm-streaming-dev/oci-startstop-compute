@@ -46,15 +46,15 @@ router.get('/cron', async (ctx: Koa.Context) => {
     });
 
     instanceState?.instance.lifecycleState ===
-      core.models.Instance.LifecycleState.Stopped
+    core.models.Instance.LifecycleState.Stopped
       ? await sgOCI.getComputeClient().instanceAction({
-        instanceId: instance,
-        action: core.requests.InstanceActionRequest.Action.Start,
-      })
+          instanceId: instance,
+          action: core.requests.InstanceActionRequest.Action.Start,
+        })
       : await sgOCI.getComputeClient().instanceAction({
-        instanceId: instance,
-        action: core.requests.InstanceActionRequest.Action.Softstop,
-      });
+          instanceId: instance,
+          action: core.requests.InstanceActionRequest.Action.Softstop,
+        });
   }
 
   for (const instance of tokyoInstances) {
@@ -63,15 +63,15 @@ router.get('/cron', async (ctx: Koa.Context) => {
     });
 
     instanceState?.instance.lifecycleState ===
-      core.models.Instance.LifecycleState.Stopped
+    core.models.Instance.LifecycleState.Stopped
       ? await sgOCI.getComputeClient().instanceAction({
-        instanceId: instance,
-        action: core.requests.InstanceActionRequest.Action.Start,
-      })
+          instanceId: instance,
+          action: core.requests.InstanceActionRequest.Action.Start,
+        })
       : await sgOCI.getComputeClient().instanceAction({
-        instanceId: instance,
-        action: core.requests.InstanceActionRequest.Action.Softstop,
-      });
+          instanceId: instance,
+          action: core.requests.InstanceActionRequest.Action.Softstop,
+        });
   }
 
   ctx.body = `Process Done. ${new Date().toString()}`;
@@ -121,9 +121,9 @@ router.get('/task', async (ctx: Koa.Context) => {
   !instances.includes(instanceId as string)
     ? ctx.throw(400, 'Instance Not Found Please check the instance id')
     : await oci.getComputeClient().instanceAction({
-      instanceId: instanceId as string,
-      action: mapAction,
-    });
+        instanceId: instanceId as string,
+        action: mapAction,
+      });
 
   ctx.body = 'Process Done';
 });
