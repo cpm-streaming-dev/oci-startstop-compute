@@ -19,7 +19,12 @@
 - ocid1.instance.oc1.ap-singapore-1.anzwsljrk644ttqc7jub553aepgufjdx6kbuf2sl3jixbabt6yscdxw4z7nq
 ## Tokyo
 
-+  haha
++ ocid1.instance.oc1.ap-tokyo-1.anxhiljrk644ttqcopia3urklef5wkrtzs5yyybacn5s2tauqyyae5z5s5sq
++ ocid1.instance.oc1.ap-tokyo-1.anxhiljrk644ttqce5lzporlmk3h7qgoffllb4l5m32ngrijedmh7n23bwkq
++ ocid1.instance.oc1.ap-tokyo-1.anxhiljrk644ttqcdp4kd66piitbpymmxdb4pgasjid24dj62x3wqfh4je2q
++ ocid1.instance.oc1.ap-tokyo-1.anxhiljrk644ttqcsj6i2fhutwsmhcnmvejmu6zsubposjvvgvjcdxhvru6q
++ ocid1.instance.oc1.ap-tokyo-1.anxhiljrk644ttqcpqvvs2ezerumawqah6vldhadf2fpiywwouvrffr6hftq
++ ocid1.instance.oc1.ap-tokyo-1.anxhiljrk644ttqcqhyhhn2qan6nk3whaxoox6uaf3tltdybqulgvxsyh67q
 
 ## Manual
 ```bash
