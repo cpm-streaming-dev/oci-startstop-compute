@@ -27,11 +27,13 @@ const dotenv_1 = require("dotenv");
 const getListInstances = (region) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, e_1, _b, _c;
     const instances = [];
-    const getRegion = region === "tokyo" ? oci_sdk_1.common.Region.AP_TOKYO_1 : oci_sdk_1.common.Region.AP_SINGAPORE_1;
+    const getRegion = region === 'tokyo'
+        ? oci_sdk_1.common.Region.AP_TOKYO_1
+        : oci_sdk_1.common.Region.AP_SINGAPORE_1;
     const oci = new oci_1.default(getRegion);
     try {
         for (var _d = true, _e = __asyncValues(oci.getComputeClient().listAllInstances({
-            compartmentId: process.env.COMPARTMENTID
+            compartmentId: process.env.COMPARTMENTID,
         })), _f; _f = yield _e.next(), _a = _f.done, !_a; _d = true) {
             _c = _f.value;
             _d = false;
