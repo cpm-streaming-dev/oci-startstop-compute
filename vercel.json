@@ -20,7 +20,7 @@
     },
     {
       "path": "/cron",
-      "schedule": "20 04 * * *"
+      "schedule": "30 04 * * *"
     }
   ]
 }
