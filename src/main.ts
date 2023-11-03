@@ -13,7 +13,7 @@ export const app = new Koa();
 const router: Router = new Router();
 
 router.get('/', async (ctx: Koa.Context) => {
-  ctx.body = `Healthy ${new Date().toString()}`;
+  ctx.body = `Healthy ${new Date().toDateString()}`;
 });
 
 router.get('/cron', async (ctx: Koa.Context) => {
