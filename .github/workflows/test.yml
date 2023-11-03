@@ -32,4 +32,11 @@ jobs:
         run: pnpm install
 
       - name: Run tests
+        env:
+          TENANCY: ${{ secrets.TENANCY }}
+          USERID: ${{ secrets.USERID }}
+          FINGERPRINT: ${{ secrets.FINGERPRINT }}
+          PASSPHRASE: ${{secrets.PASSPHRASE }}
+          COMPARTMENTID: ${{ secrets.COMPARTMENTID }}
+          API_KEY: ${{ secrets.APIKEY }}
         run: pnpm test
