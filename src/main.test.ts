@@ -9,8 +9,17 @@ it('works', async () => {
 });
 
 it('Should not contains not exists SG instance id', async () => {
-  const response = await request(app.callback()).get('/test');
+  const response = await request(app.callback()).get('/sg');
   const instances = await getListInstances('sg');
+
+  JSON.parse(response.text).map((instance: string) =>
+    expect(instances).toContain(instance)
+  );
+});
+
+it('Should not contains not exists Tokyo instance id', async () => {
+  const response = await request(app.callback()).get('/tokyo');
+  const instances = await getListInstances('tokyo');
 
   JSON.parse(response.text).map((instance: string) =>
     expect(instances).toContain(instance)

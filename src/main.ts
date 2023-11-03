@@ -32,10 +32,33 @@ router.get('/cron', async (ctx: Koa.Context) => {
     .filter((line) => line.startsWith('- '))
     .map((line) => line.split('- ')[1]);
 
+  const tokyoInstances = text
+    .split('\n')
+    .filter((line) => line.startsWith('+ '))
+    .map((line) => line.split('+ ')[1]);
+
   const sgOCI = new Oci(common.Region.AP_SINGAPORE_1);
+  const tokyoOCI = new Oci(common.Region.AP_TOKYO_1);
 
   for (const instance of sgInstances) {
     const instanceState = await sgOCI.getComputeClient().getInstance({
+      instanceId: instance,
+    });
+
+    instanceState?.instance.lifecycleState ===
+    core.models.Instance.LifecycleState.Stopped
+      ? await sgOCI.getComputeClient().instanceAction({
+          instanceId: instance,
+          action: core.requests.InstanceActionRequest.Action.Start,
+        })
+      : await sgOCI.getComputeClient().instanceAction({
+          instanceId: instance,
+          action: core.requests.InstanceActionRequest.Action.Softstop,
+        });
+  }
+
+  for (const instance of tokyoInstances) {
+    const instanceState = await tokyoOCI.getComputeClient().getInstance({
       instanceId: instance,
     });
 
@@ -105,7 +128,7 @@ router.get('/task', async (ctx: Koa.Context) => {
   ctx.body = 'Process Done';
 });
 
-router.get('/test', async (ctx: Koa.Context) => {
+router.get('/sg', async (ctx: Koa.Context) => {
   const text = readFileSync('./README.md', 'utf8');
   const sgInstances = text
     .split('\n')
@@ -113,6 +136,18 @@ router.get('/test', async (ctx: Koa.Context) => {
     .map((line) => line.split('- ')[1]);
 
   const instances = sgInstances.map((line) => line.replace('\r', ''));
+
+  ctx.body = instances;
+});
+
+router.get('/tokyo', async (ctx: Koa.Context) => {
+  const text = readFileSync('./README.md', 'utf8');
+  const tokyoInstances = text
+    .split('\n')
+    .filter((line) => line.startsWith('+ '))
+    .map((line) => line.split('+ ')[1]);
+
+  const instances = tokyoInstances.map((line) => line.replace('\r', ''));
 
   ctx.body = instances;
 });
