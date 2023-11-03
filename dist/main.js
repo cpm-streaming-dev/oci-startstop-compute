@@ -26,12 +26,13 @@ const dotenv_1 = require("dotenv");
 const oci_1 = __importDefault(require("./oci"));
 const oci_sdk_1 = require("oci-sdk");
 const fs_1 = require("fs");
+const getListInstances_1 = require("./libs/getListInstances");
 (0, dotenv_1.config)();
 const port = process.env.PORT || 3000;
 exports.app = new koa_1.default();
 const router = new koa_router_1.default();
 router.get('/', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    ctx.body = `Healthy ${new Date().toString()}`;
+    ctx.body = `Healthy ${new Date().toDateString()}`;
 }));
 router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     const authHeader = ctx.request.headers.authorization;
@@ -96,6 +97,27 @@ router.get('/status', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     ctx.body = {
         instances: instances,
     };
+}));
+router.get('/task', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    if (ctx.get('x-api-key') !== process.env.API_KEY) {
+        ctx.throw(401, 'Unauthorized');
+    }
+    const { region, instanceId, action } = ctx.query;
+    const mapRegion = region === 'tokyo'
+        ? oci_sdk_1.common.Region.AP_TOKYO_1
+        : oci_sdk_1.common.Region.AP_SINGAPORE_1;
+    const mapAction = action === 'start'
+        ? oci_sdk_1.core.requests.InstanceActionRequest.Action.Start
+        : oci_sdk_1.core.requests.InstanceActionRequest.Action.Softstop;
+    const instances = yield (0, getListInstances_1.getListInstances)(region);
+    const oci = new oci_1.default(mapRegion);
+    !instances.includes(instanceId)
+        ? ctx.throw(400, 'Instance Not Found Please check the instance id')
+        : yield oci.getComputeClient().instanceAction({
+            instanceId: instanceId,
+            action: mapAction,
+        });
+    ctx.body = 'Process Done';
 }));
 router.get('/test', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     const text = (0, fs_1.readFileSync)('./README.md', 'utf8');

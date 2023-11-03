@@ -4,6 +4,7 @@ import { config } from 'dotenv';
 import Oci from './oci';
 import { common, core } from 'oci-sdk';
 import { readFileSync } from 'fs';
+import { getListInstances } from './libs/getListInstances';
 
 config();
 
@@ -77,6 +78,31 @@ router.get('/status', async (ctx: Koa.Context) => {
   ctx.body = {
     instances: instances,
   };
+});
+
+router.get('/task', async (ctx: Koa.Context) => {
+  if (ctx.get('x-api-key') !== process.env.API_KEY) {
+    ctx.throw(401, 'Unauthorized');
+  }
+  const { region, instanceId, action } = ctx.query;
+  const mapRegion =
+    region === 'tokyo'
+      ? common.Region.AP_TOKYO_1
+      : common.Region.AP_SINGAPORE_1;
+  const mapAction =
+    action === 'start'
+      ? core.requests.InstanceActionRequest.Action.Start
+      : core.requests.InstanceActionRequest.Action.Softstop;
+  const instances = await getListInstances(region as string);
+  const oci = new Oci(mapRegion);
+  !instances.includes(instanceId as string)
+    ? ctx.throw(400, 'Instance Not Found Please check the instance id')
+    : await oci.getComputeClient().instanceAction({
+        instanceId: instanceId as string,
+        action: mapAction,
+      });
+
+  ctx.body = 'Process Done';
 });
 
 router.get('/test', async (ctx: Koa.Context) => {
