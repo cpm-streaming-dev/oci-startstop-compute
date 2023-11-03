@@ -45,9 +45,29 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         .split('\n')
         .filter((line) => line.startsWith('- '))
         .map((line) => line.split('- ')[1]);
+    const tokyoInstances = text
+        .split('\n')
+        .filter((line) => line.startsWith('+ '))
+        .map((line) => line.split('+ ')[1]);
     const sgOCI = new oci_1.default(oci_sdk_1.common.Region.AP_SINGAPORE_1);
+    const tokyoOCI = new oci_1.default(oci_sdk_1.common.Region.AP_TOKYO_1);
     for (const instance of sgInstances) {
         const instanceState = yield sgOCI.getComputeClient().getInstance({
+            instanceId: instance,
+        });
+        (instanceState === null || instanceState === void 0 ? void 0 : instanceState.instance.lifecycleState) ===
+            oci_sdk_1.core.models.Instance.LifecycleState.Stopped
+            ? yield sgOCI.getComputeClient().instanceAction({
+                instanceId: instance,
+                action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Start,
+            })
+            : yield sgOCI.getComputeClient().instanceAction({
+                instanceId: instance,
+                action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Softstop,
+            });
+    }
+    for (const instance of tokyoInstances) {
+        const instanceState = yield tokyoOCI.getComputeClient().getInstance({
             instanceId: instance,
         });
         (instanceState === null || instanceState === void 0 ? void 0 : instanceState.instance.lifecycleState) ===
@@ -119,13 +139,22 @@ router.get('/task', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         });
     ctx.body = 'Process Done';
 }));
-router.get('/test', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/sg', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     const text = (0, fs_1.readFileSync)('./README.md', 'utf8');
     const sgInstances = text
         .split('\n')
         .filter((line) => line.startsWith('- '))
         .map((line) => line.split('- ')[1]);
     const instances = sgInstances.map((line) => line.replace('\r', ''));
+    ctx.body = instances;
+}));
+router.get('/tokyo', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    const text = (0, fs_1.readFileSync)('./README.md', 'utf8');
+    const tokyoInstances = text
+        .split('\n')
+        .filter((line) => line.startsWith('+ '))
+        .map((line) => line.split('+ ')[1]);
+    const instances = tokyoInstances.map((line) => line.replace('\r', ''));
     ctx.body = instances;
 }));
 exports.app.use(router.routes());

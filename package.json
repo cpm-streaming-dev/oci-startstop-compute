@@ -47,5 +47,9 @@
     "koa-router": "^12.0.1",
     "oci-sdk": "^2.73.0",
     "oci-workrequests": "^2.73.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
   }
 }
