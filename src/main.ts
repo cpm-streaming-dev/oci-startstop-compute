@@ -40,15 +40,15 @@ router.get('/cron', async (ctx: Koa.Context) => {
     });
 
     instanceState?.instance.lifecycleState ===
-      core.models.Instance.LifecycleState.Stopped
+    core.models.Instance.LifecycleState.Stopped
       ? await sgOCI.getComputeClient().instanceAction({
-        instanceId: instance,
-        action: core.requests.InstanceActionRequest.Action.Start,
-      })
+          instanceId: instance,
+          action: core.requests.InstanceActionRequest.Action.Start,
+        })
       : await sgOCI.getComputeClient().instanceAction({
-        instanceId: instance,
-        action: core.requests.InstanceActionRequest.Action.Softstop,
-      });
+          instanceId: instance,
+          action: core.requests.InstanceActionRequest.Action.Softstop,
+        });
   }
 
   ctx.body = `Process Done. ${new Date().toString()}`;
@@ -89,17 +89,18 @@ router.get('/task', async (ctx: Koa.Context) => {
   const mapAction =
     action === 'start'
       ? core.requests.InstanceActionRequest.Action.Start
-      : core.requests.InstanceActionRequest.Action.Softstop
+      : core.requests.InstanceActionRequest.Action.Softstop;
   const instances = await getListInstances(region as string);
   const oci = new Oci(mapRegion);
-  !instances.includes(instanceId as string) ? ctx.throw(400, 'Instance Not Found Please check the instance id') : await oci.getComputeClient().instanceAction({
-    instanceId: instanceId as string,
-    action: mapAction,
-  });
+  !instances.includes(instanceId as string)
+    ? ctx.throw(400, 'Instance Not Found Please check the instance id')
+    : await oci.getComputeClient().instanceAction({
+        instanceId: instanceId as string,
+        action: mapAction,
+      });
 
-
-  ctx.body = "Process Done";
-})
+  ctx.body = 'Process Done';
+});
 
 router.get('/test', async (ctx: Koa.Context) => {
   const text = readFileSync('./README.md', 'utf8');
