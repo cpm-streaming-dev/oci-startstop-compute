@@ -4,6 +4,7 @@ import { config } from 'dotenv';
 import Oci from './oci';
 import { common, core } from 'oci-sdk';
 import { readFileSync } from 'fs';
+import { getListInstances } from './libs/getListInstances';
 
 config();
 
@@ -39,15 +40,15 @@ router.get('/cron', async (ctx: Koa.Context) => {
     });
 
     instanceState?.instance.lifecycleState ===
-    core.models.Instance.LifecycleState.Stopped
+      core.models.Instance.LifecycleState.Stopped
       ? await sgOCI.getComputeClient().instanceAction({
-          instanceId: instance,
-          action: core.requests.InstanceActionRequest.Action.Start,
-        })
+        instanceId: instance,
+        action: core.requests.InstanceActionRequest.Action.Start,
+      })
       : await sgOCI.getComputeClient().instanceAction({
-          instanceId: instance,
-          action: core.requests.InstanceActionRequest.Action.Softstop,
-        });
+        instanceId: instance,
+        action: core.requests.InstanceActionRequest.Action.Softstop,
+      });
   }
 
   ctx.body = `Process Done. ${new Date().toString()}`;
@@ -78,6 +79,27 @@ router.get('/status', async (ctx: Koa.Context) => {
     instances: instances,
   };
 });
+
+router.get('/task', async (ctx: Koa.Context) => {
+  const { region, instanceId, action } = ctx.query;
+  const mapRegion =
+    region === 'tokyo'
+      ? common.Region.AP_TOKYO_1
+      : common.Region.AP_SINGAPORE_1;
+  const mapAction =
+    action === 'start'
+      ? core.requests.InstanceActionRequest.Action.Start
+      : core.requests.InstanceActionRequest.Action.Softstop
+  const instances = await getListInstances(region as string);
+  const oci = new Oci(mapRegion);
+  !instances.includes(instanceId as string) ? ctx.throw(400, 'Instance Not Found Please check the instance id') : await oci.getComputeClient().instanceAction({
+    instanceId: instanceId as string,
+    action: mapAction,
+  });
+
+
+  ctx.body = "Process Done";
+})
 
 router.get('/test', async (ctx: Koa.Context) => {
   const text = readFileSync('./README.md', 'utf8');

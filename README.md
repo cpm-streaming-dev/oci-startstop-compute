@@ -5,6 +5,7 @@
 1. [Rule](#Rule)
 2. [Singapore](#Singapore)
 3. [Tokyo](#Tokyo)
+4. [Manual](#Manual)
 ## Rule
 
 นำ ocid ของ instance ที่ต้องการ stop คืนวันศุกร์ 00.00 AM start คืนวันจันทร์ 06.00 AM ตาม region ด้านล่าง
@@ -19,3 +20,11 @@
 ## Tokyo
 
 +  haha
+
+## Manual
+```bash
+curl \
+  -H 'Content-Type: application/json' \
+  -H 'x-api-key: SOMEAPIKEY' \
+  https://oci-startstop-compute.vercel.app/task?region={sg|tokyo}&instanceId={instanceId}&action={start|stop}
+```
