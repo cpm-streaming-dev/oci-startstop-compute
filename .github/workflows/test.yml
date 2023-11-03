@@ -38,5 +38,6 @@ jobs:
           FINGERPRINT: ${{ secrets.FINGERPRINT }}
           PASSPHRASE: ${{secrets.PASSPHRASE }}
           COMPARTMENTID: ${{ secrets.COMPARTMENTID }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
           API_KEY: ${{ secrets.APIKEY }}
         run: pnpm test
