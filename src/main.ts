@@ -64,11 +64,11 @@ router.get('/cron', async (ctx: Koa.Context) => {
 
     instanceState?.instance.lifecycleState ===
     core.models.Instance.LifecycleState.Stopped
-      ? await sgOCI.getComputeClient().instanceAction({
+      ? await tokyoOCI.getComputeClient().instanceAction({
           instanceId: instance,
           action: core.requests.InstanceActionRequest.Action.Start,
         })
-      : await sgOCI.getComputeClient().instanceAction({
+      : await tokyoOCI.getComputeClient().instanceAction({
           instanceId: instance,
           action: core.requests.InstanceActionRequest.Action.Softstop,
         });
@@ -95,6 +95,7 @@ router.get('/status', async (ctx: Koa.Context) => {
       displayName: instance.displayName,
       instanceId: instance.id,
       lifecycleState: instance.lifecycleState,
+      region: ctx.query.region ?? 'sg',
     });
   }
 
