@@ -72,11 +72,11 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         });
         (instanceState === null || instanceState === void 0 ? void 0 : instanceState.instance.lifecycleState) ===
             oci_sdk_1.core.models.Instance.LifecycleState.Stopped
-            ? yield sgOCI.getComputeClient().instanceAction({
+            ? yield tokyoOCI.getComputeClient().instanceAction({
                 instanceId: instance,
                 action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Start,
             })
-            : yield sgOCI.getComputeClient().instanceAction({
+            : yield tokyoOCI.getComputeClient().instanceAction({
                 instanceId: instance,
                 action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Softstop,
             });
@@ -85,6 +85,7 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 router.get('/status', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, e_1, _b, _c;
+    var _d;
     if (ctx.get('x-api-key') !== process.env.API_KEY) {
         ctx.throw(401, 'Unauthorized');
     }
@@ -94,23 +95,24 @@ router.get('/status', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         : oci_sdk_1.common.Region.AP_SINGAPORE_1;
     const oci = new oci_1.default(region);
     try {
-        for (var _d = true, _e = __asyncValues(oci
+        for (var _e = true, _f = __asyncValues(oci
             .getComputeClient()
-            .listAllInstances({ compartmentId: process.env.COMPARTMENTID })), _f; _f = yield _e.next(), _a = _f.done, !_a; _d = true) {
-            _c = _f.value;
-            _d = false;
+            .listAllInstances({ compartmentId: process.env.COMPARTMENTID })), _g; _g = yield _f.next(), _a = _g.done, !_a; _e = true) {
+            _c = _g.value;
+            _e = false;
             const instance = _c;
             instances.push({
                 displayName: instance.displayName,
                 instanceId: instance.id,
                 lifecycleState: instance.lifecycleState,
+                region: (_d = ctx.query.region) !== null && _d !== void 0 ? _d : 'sg'
             });
         }
     }
     catch (e_1_1) { e_1 = { error: e_1_1 }; }
     finally {
         try {
-            if (!_d && !_a && (_b = _e.return)) yield _b.call(_e);
+            if (!_e && !_a && (_b = _f.return)) yield _b.call(_f);
         }
         finally { if (e_1) throw e_1.error; }
     }
