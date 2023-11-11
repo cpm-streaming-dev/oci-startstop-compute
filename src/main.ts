@@ -5,6 +5,7 @@ import Oci from './oci';
 import { common, core } from 'oci-sdk';
 import { readFileSync } from 'fs';
 import { getListInstances } from './libs/getListInstances';
+import { MailContent, sendMail } from './libs/sendMail';
 
 config();
 
@@ -26,6 +27,8 @@ router.get('/cron', async (ctx: Koa.Context) => {
     'https://raw.githubusercontent.com/cpm-streaming-dev/oci-startstop-compute/master/README.md'
   );
 
+  const mailContent: MailContent[] = [];
+
   const text = await res.text();
   const sgInstances = text
     .split('\n')
@@ -43,6 +46,17 @@ router.get('/cron', async (ctx: Koa.Context) => {
   for (const instance of sgInstances) {
     const instanceState = await sgOCI.getComputeClient().getInstance({
       instanceId: instance,
+    });
+
+    mailContent.push({
+      displayName: instanceState.instance.displayName,
+      instanceId: instanceState.instance.id,
+      lifecycleState:
+        instanceState.instance.lifecycleState ===
+        core.models.Instance.LifecycleState.Stopped
+          ? 'Stopped'
+          : 'Running',
+      region: instanceState.instance.region,
     });
 
     instanceState?.instance.lifecycleState ===
@@ -72,7 +86,20 @@ router.get('/cron', async (ctx: Koa.Context) => {
           instanceId: instance,
           action: core.requests.InstanceActionRequest.Action.Softstop,
         });
+
+    mailContent.push({
+      displayName: instanceState.instance.displayName,
+      instanceId: instanceState.instance.id,
+      lifecycleState:
+        instanceState.instance.lifecycleState ===
+        core.models.Instance.LifecycleState.Stopped
+          ? 'Stopped'
+          : 'Running',
+      region: instanceState.instance.region,
+    });
   }
+
+  await sendMail(mailContent);
 
   ctx.body = `Process Done. ${new Date().toString()}`;
 });
@@ -153,7 +180,26 @@ router.get('/tokyo', async (ctx: Koa.Context) => {
   ctx.body = instances;
 });
 
+router.get('/test', async (ctx: Koa.Context) => {
+  await sendMail([
+    {
+      displayName: 'haa',
+      instanceId: 'haa',
+      lifecycleState: 'aa',
+      region: 'sg',
+    },
+    {
+      displayName: 'haa1',
+      instanceId: 'haa1',
+      lifecycleState: 'aa1',
+      region: 'sg',
+    },
+  ]);
+  ctx.body = 'done';
+});
+
 app.use(router.routes());
 
-export const server = app.listen(port);
-console.log(`Application is running on port ${port}`);
+export const server = app.listen(port, () =>
+  console.log(`Application is running on port ${port}`)
+);
