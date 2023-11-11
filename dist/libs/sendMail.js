@@ -19,17 +19,17 @@ const sendMail = (mailContent) => __awaiter(void 0, void 0, void 0, function* ()
         service: 'gmail',
         auth: {
             user: 'swuemailservice@gmail.com',
-            pass: process.env.MAILPASS
-        }
+            pass: process.env.MAILPASS,
+        },
     });
     const mailOptions = {
         from: 'swuemailservice@gmail.com',
         to: 'thiti180536@gmail.com',
         subject: `OCI Cron Schedule ${new Date().toLocaleString()}`,
         html: `<p>Cron job is running sucessfully on: ${new Date().toLocaleString()}</p>
-          ${mailContent.map((item) => (`<ol>
+          ${mailContent.map((item) => `<ol>
               <li>${item.displayName} ${item.lifecycleState} ${item.instanceId} ${item.region}</li>
-            </ol>`))}` // HTML body,
+            </ol>`)}`, // HTML body,
     };
     transporter.sendMail(mailOptions, function (err, info) {
         if (err)

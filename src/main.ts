@@ -180,24 +180,6 @@ router.get('/tokyo', async (ctx: Koa.Context) => {
   ctx.body = instances;
 });
 
-router.get('/test', async (ctx: Koa.Context) => {
-  await sendMail([
-    {
-      displayName: 'haa',
-      instanceId: 'haa',
-      lifecycleState: 'aa',
-      region: 'sg',
-    },
-    {
-      displayName: 'haa1',
-      instanceId: 'haa1',
-      lifecycleState: 'aa1',
-      region: 'sg',
-    },
-  ]);
-  ctx.body = 'done';
-});
-
 app.use(router.routes());
 
 export const server = app.listen(port, () =>

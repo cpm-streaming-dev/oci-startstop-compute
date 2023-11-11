@@ -60,7 +60,8 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         mailContent.push({
             displayName: instanceState.instance.displayName,
             instanceId: instanceState.instance.id,
-            lifecycleState: instanceState.instance.lifecycleState === oci_sdk_1.core.models.Instance.LifecycleState.Stopped
+            lifecycleState: instanceState.instance.lifecycleState ===
+                oci_sdk_1.core.models.Instance.LifecycleState.Stopped
                 ? 'Stopped'
                 : 'Running',
             region: instanceState.instance.region,
@@ -93,7 +94,8 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         mailContent.push({
             displayName: instanceState.instance.displayName,
             instanceId: instanceState.instance.id,
-            lifecycleState: instanceState.instance.lifecycleState === oci_sdk_1.core.models.Instance.LifecycleState.Stopped
+            lifecycleState: instanceState.instance.lifecycleState ===
+                oci_sdk_1.core.models.Instance.LifecycleState.Stopped
                 ? 'Stopped'
                 : 'Running',
             region: instanceState.instance.region,
@@ -177,21 +179,6 @@ router.get('/tokyo', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         .map((line) => line.split('+ ')[1]);
     const instances = tokyoInstances.map((line) => line.replace('\r', ''));
     ctx.body = instances;
-}));
-router.get('/test', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, sendMail_1.sendMail)([{
-            displayName: "haa",
-            instanceId: "haa",
-            lifecycleState: "aa",
-            region: 'sg'
-        },
-        {
-            displayName: "haa1",
-            instanceId: "haa1",
-            lifecycleState: "aa1",
-            region: 'sg'
-        }]);
-    ctx.body = "done";
 }));
 exports.app.use(router.routes());
 exports.server = exports.app.listen(port, () => console.log(`Application is running on port ${port}`));
