@@ -27,6 +27,7 @@ const oci_1 = __importDefault(require("./oci"));
 const oci_sdk_1 = require("oci-sdk");
 const fs_1 = require("fs");
 const getListInstances_1 = require("./libs/getListInstances");
+const sendMail_1 = require("./libs/sendMail");
 (0, dotenv_1.config)();
 const port = process.env.PORT || 3000;
 exports.app = new koa_1.default();
@@ -40,6 +41,7 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         return ctx.throw(401, 'Unauthorized');
     }
     const res = yield fetch('https://raw.githubusercontent.com/cpm-streaming-dev/oci-startstop-compute/master/README.md');
+    const mailContent = [];
     const text = yield res.text();
     const sgInstances = text
         .split('\n')
@@ -54,6 +56,15 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     for (const instance of sgInstances) {
         const instanceState = yield sgOCI.getComputeClient().getInstance({
             instanceId: instance,
+        });
+        mailContent.push({
+            displayName: instanceState.instance.displayName,
+            instanceId: instanceState.instance.id,
+            lifecycleState: instanceState.instance.lifecycleState ===
+                oci_sdk_1.core.models.Instance.LifecycleState.Stopped
+                ? 'Stopped'
+                : 'Running',
+            region: instanceState.instance.region,
         });
         (instanceState === null || instanceState === void 0 ? void 0 : instanceState.instance.lifecycleState) ===
             oci_sdk_1.core.models.Instance.LifecycleState.Stopped
@@ -80,7 +91,17 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
                 instanceId: instance,
                 action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Softstop,
             });
+        mailContent.push({
+            displayName: instanceState.instance.displayName,
+            instanceId: instanceState.instance.id,
+            lifecycleState: instanceState.instance.lifecycleState ===
+                oci_sdk_1.core.models.Instance.LifecycleState.Stopped
+                ? 'Stopped'
+                : 'Running',
+            region: instanceState.instance.region,
+        });
     }
+    yield (0, sendMail_1.sendMail)(mailContent);
     ctx.body = `Process Done. ${new Date().toString()}`;
 }));
 router.get('/status', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
@@ -105,7 +126,7 @@ router.get('/status', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
                 displayName: instance.displayName,
                 instanceId: instance.id,
                 lifecycleState: instance.lifecycleState,
-                region: (_d = ctx.query.region) !== null && _d !== void 0 ? _d : 'sg'
+                region: (_d = ctx.query.region) !== null && _d !== void 0 ? _d : 'sg',
             });
         }
     }
@@ -160,5 +181,4 @@ router.get('/tokyo', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     ctx.body = instances;
 }));
 exports.app.use(router.routes());
-exports.server = exports.app.listen(port);
-console.log(`Application is running on port ${port}`);
+exports.server = exports.app.listen(port, () => console.log(`Application is running on port ${port}`));
