@@ -51,11 +51,7 @@ router.get('/cron', async (ctx: Koa.Context) => {
     mailContent.push({
       displayName: instanceState.instance.displayName,
       instanceId: instanceState.instance.id,
-      lifecycleState:
-        instanceState.instance.lifecycleState ===
-        core.models.Instance.LifecycleState.Stopped
-          ? 'Stopped'
-          : 'Running',
+      lifecycleState: instanceState.instance.lifecycleState,
       region: instanceState.instance.region,
     });
 
@@ -90,11 +86,7 @@ router.get('/cron', async (ctx: Koa.Context) => {
     mailContent.push({
       displayName: instanceState.instance.displayName,
       instanceId: instanceState.instance.id,
-      lifecycleState:
-        instanceState.instance.lifecycleState ===
-        core.models.Instance.LifecycleState.Stopped
-          ? 'Stopped'
-          : 'Running',
+      lifecycleState: instanceState.instance.lifecycleState,
       region: instanceState.instance.region,
     });
   }
@@ -125,6 +117,8 @@ router.get('/status', async (ctx: Koa.Context) => {
       region: ctx.query.region ?? 'sg',
     });
   }
+
+  await sendMail(instances as MailContent[]);
 
   ctx.body = {
     instances: instances,
