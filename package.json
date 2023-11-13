@@ -5,6 +5,7 @@
   "main": "main.ts",
   "scripts": {
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "dev": "nodemon src/main.ts",
     "start": "node dist/main.js",
     "build": "rimraf dist && tsc -p tsconfig.build.json",
@@ -22,7 +23,6 @@
     "@types/jest": "^29.5.7",
     "@types/koa": "^2.13.10",
     "@types/koa-router": "^7.4.6",
-    "@types/nodemailer": "^6.4.14",
     "@types/supertest": "^2.0.15",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
     "@typescript-eslint/parser": "^6.9.1",
@@ -47,7 +47,6 @@
     "dotenv": "^16.3.1",
     "koa": "^2.14.2",
     "koa-router": "^12.0.1",
-    "nodemailer": "^6.9.7",
     "oci-sdk": "^2.73.0",
     "oci-workrequests": "^2.73.0"
   },

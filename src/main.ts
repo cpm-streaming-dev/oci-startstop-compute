@@ -5,7 +5,7 @@ import Oci from './oci';
 import { common, core } from 'oci-sdk';
 import { readFileSync } from 'fs';
 import { getListInstances } from './libs/getListInstances';
-import { MailContent, sendMail } from './libs/sendMail';
+import { Content, sendNotify } from './libs/notify';
 
 config();
 
@@ -27,7 +27,7 @@ router.get('/cron', async (ctx: Koa.Context) => {
     'https://raw.githubusercontent.com/cpm-streaming-dev/oci-startstop-compute/master/README.md'
   );
 
-  const mailContent: MailContent[] = [];
+  const content: Content[] = [];
 
   const text = await res.text();
   const sgInstances = text
@@ -48,7 +48,7 @@ router.get('/cron', async (ctx: Koa.Context) => {
       instanceId: instance,
     });
 
-    mailContent.push({
+    content.push({
       displayName: instanceState.instance.displayName,
       instanceId: instanceState.instance.id,
       lifecycleState: instanceState.instance.lifecycleState,
@@ -72,6 +72,13 @@ router.get('/cron', async (ctx: Koa.Context) => {
       instanceId: instance,
     });
 
+    content.push({
+      displayName: instanceState.instance.displayName,
+      instanceId: instanceState.instance.id,
+      lifecycleState: instanceState.instance.lifecycleState,
+      region: instanceState.instance.region,
+    });
+
     instanceState?.instance.lifecycleState ===
     core.models.Instance.LifecycleState.Stopped
       ? await tokyoOCI.getComputeClient().instanceAction({
@@ -82,16 +89,9 @@ router.get('/cron', async (ctx: Koa.Context) => {
           instanceId: instance,
           action: core.requests.InstanceActionRequest.Action.Softstop,
         });
-
-    mailContent.push({
-      displayName: instanceState.instance.displayName,
-      instanceId: instanceState.instance.id,
-      lifecycleState: instanceState.instance.lifecycleState,
-      region: instanceState.instance.region,
-    });
   }
 
-  await sendMail(mailContent);
+  await sendNotify(content as Content[]);
 
   ctx.body = `Process Done. ${new Date().toString()}`;
 });
@@ -117,8 +117,6 @@ router.get('/status', async (ctx: Koa.Context) => {
       region: ctx.query.region ?? 'sg',
     });
   }
-
-  await sendMail(instances as MailContent[]);
 
   ctx.body = {
     instances: instances,
