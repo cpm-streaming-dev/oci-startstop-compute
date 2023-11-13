@@ -27,7 +27,7 @@ const oci_1 = __importDefault(require("./oci"));
 const oci_sdk_1 = require("oci-sdk");
 const fs_1 = require("fs");
 const getListInstances_1 = require("./libs/getListInstances");
-const sendMail_1 = require("./libs/sendMail");
+const notify_1 = require("./libs/notify");
 (0, dotenv_1.config)();
 const port = process.env.PORT || 3000;
 exports.app = new koa_1.default();
@@ -41,7 +41,7 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         return ctx.throw(401, 'Unauthorized');
     }
     const res = yield fetch('https://raw.githubusercontent.com/cpm-streaming-dev/oci-startstop-compute/master/README.md');
-    const mailContent = [];
+    const content = [];
     const text = yield res.text();
     const sgInstances = text
         .split('\n')
@@ -57,7 +57,7 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         const instanceState = yield sgOCI.getComputeClient().getInstance({
             instanceId: instance,
         });
-        mailContent.push({
+        content.push({
             displayName: instanceState.instance.displayName,
             instanceId: instanceState.instance.id,
             lifecycleState: instanceState.instance.lifecycleState,
@@ -78,6 +78,12 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         const instanceState = yield tokyoOCI.getComputeClient().getInstance({
             instanceId: instance,
         });
+        content.push({
+            displayName: instanceState.instance.displayName,
+            instanceId: instanceState.instance.id,
+            lifecycleState: instanceState.instance.lifecycleState,
+            region: instanceState.instance.region,
+        });
         (instanceState === null || instanceState === void 0 ? void 0 : instanceState.instance.lifecycleState) ===
             oci_sdk_1.core.models.Instance.LifecycleState.Stopped
             ? yield tokyoOCI.getComputeClient().instanceAction({
@@ -88,14 +94,8 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
                 instanceId: instance,
                 action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Softstop,
             });
-        mailContent.push({
-            displayName: instanceState.instance.displayName,
-            instanceId: instanceState.instance.id,
-            lifecycleState: instanceState.instance.lifecycleState,
-            region: instanceState.instance.region,
-        });
     }
-    yield (0, sendMail_1.sendMail)(mailContent);
+    yield (0, notify_1.sendNotify)(content);
     ctx.body = `Process Done. ${new Date().toString()}`;
 }));
 router.get('/status', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
@@ -131,7 +131,6 @@ router.get('/status', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         }
         finally { if (e_1) throw e_1.error; }
     }
-    yield (0, sendMail_1.sendMail)(instances);
     ctx.body = {
         instances: instances,
     };
