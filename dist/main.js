@@ -60,10 +60,7 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         mailContent.push({
             displayName: instanceState.instance.displayName,
             instanceId: instanceState.instance.id,
-            lifecycleState: instanceState.instance.lifecycleState ===
-                oci_sdk_1.core.models.Instance.LifecycleState.Stopped
-                ? 'Stopped'
-                : 'Running',
+            lifecycleState: instanceState.instance.lifecycleState,
             region: instanceState.instance.region,
         });
         (instanceState === null || instanceState === void 0 ? void 0 : instanceState.instance.lifecycleState) ===
@@ -94,10 +91,7 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         mailContent.push({
             displayName: instanceState.instance.displayName,
             instanceId: instanceState.instance.id,
-            lifecycleState: instanceState.instance.lifecycleState ===
-                oci_sdk_1.core.models.Instance.LifecycleState.Stopped
-                ? 'Stopped'
-                : 'Running',
+            lifecycleState: instanceState.instance.lifecycleState,
             region: instanceState.instance.region,
         });
     }
@@ -137,6 +131,7 @@ router.get('/status', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         }
         finally { if (e_1) throw e_1.error; }
     }
+    yield (0, sendMail_1.sendMail)(instances);
     ctx.body = {
         instances: instances,
     };

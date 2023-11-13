@@ -18,15 +18,18 @@ export const sendMail = async (mailContent: MailContent[]) => {
 
   const mailOptions: SendMailOptions = {
     from: 'swuemailservice@gmail.com', // sender
-    to: 'thiti180536@gmail.com', // list of receivers
+    to: ['thiti180536@gmail.com', 'thiti_t@mfec.co.th'], // list of receivers
     subject: `OCI Cron Schedule ${new Date().toLocaleString()}`, // Mail subject
     html: `<p>Cron job is running sucessfully on: ${new Date().toLocaleString()}</p>
           ${mailContent.map(
             (item) =>
-              `<ol>
-              <li>${item.displayName} ${item.lifecycleState} ${item.instanceId} ${item.region}</li>
-            </ol>`
-          )}`, // HTML body,
+              `<ul>
+                <li>Name: ${item.displayName}</li>
+                <li>State: ${item.lifecycleState}</li>
+                <li>Id: ${item.instanceId}</li>
+                <li>Region: ${item.region}</li>
+              </ul>`
+          )}`, // HTML body
   };
 
   transporter.sendMail(mailOptions, function (err, info) {

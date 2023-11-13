@@ -24,12 +24,15 @@ const sendMail = (mailContent) => __awaiter(void 0, void 0, void 0, function* ()
     });
     const mailOptions = {
         from: 'swuemailservice@gmail.com',
-        to: 'thiti180536@gmail.com',
+        to: ['thiti180536@gmail.com', 'thiti_t@mfec.co.th'],
         subject: `OCI Cron Schedule ${new Date().toLocaleString()}`,
         html: `<p>Cron job is running sucessfully on: ${new Date().toLocaleString()}</p>
-          ${mailContent.map((item) => `<ol>
-              <li>${item.displayName} ${item.lifecycleState} ${item.instanceId} ${item.region}</li>
-            </ol>`)}`, // HTML body,
+          ${mailContent.map((item) => `<ul>
+                <li>Name: ${item.displayName}</li>
+                <li>State: ${item.lifecycleState}</li>
+                <li>Id: ${item.instanceId}</li>
+                <li>Region: ${item.region}</li>
+              </ul>`)}` // HTML body
     };
     transporter.sendMail(mailOptions, function (err, info) {
         if (err)
