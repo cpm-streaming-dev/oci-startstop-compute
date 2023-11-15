@@ -168,7 +168,6 @@ router.get('/tokyo', async (ctx: Koa.Context) => {
     .map((line) => line.split('+ ')[1]);
 
   const instances = tokyoInstances.map((line) => line.replace('\r', ''));
-
   ctx.body = instances;
 });
 
