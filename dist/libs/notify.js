@@ -24,7 +24,7 @@ const sendNotify = (content) => __awaiter(void 0, void 0, void 0, function* () {
     for (const item of content) {
         jsonData.message += `\n\nDisplay Name: ${item.displayName}\nInstance Id: ${item.instanceId}\nState: ${item.lifecycleState}\nRegion: ${item.region}`;
     }
-    const data = yield fetch(url, {
+    yield fetch(url, {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${process.env.LINE_NOTIFY_TOKEN}`,
@@ -32,7 +32,5 @@ const sendNotify = (content) => __awaiter(void 0, void 0, void 0, function* () {
         },
         body: querystring_1.default.stringify(jsonData),
     });
-    const x = yield data.json();
-    console.log(x);
 });
 exports.sendNotify = sendNotify;

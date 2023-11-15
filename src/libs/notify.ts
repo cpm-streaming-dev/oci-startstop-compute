@@ -21,7 +21,7 @@ export const sendNotify = async (content: Content[]) => {
     jsonData.message += `\n\nDisplay Name: ${item.displayName}\nInstance Id: ${item.instanceId}\nState: ${item.lifecycleState}\nRegion: ${item.region}`;
   }
 
-  const data = await fetch(url, {
+  await fetch(url, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${process.env.LINE_NOTIFY_TOKEN}`,
@@ -29,7 +29,4 @@ export const sendNotify = async (content: Content[]) => {
     },
     body: qs.stringify(jsonData),
   });
-
-  const x = await data.json();
-  console.log(x);
 };
