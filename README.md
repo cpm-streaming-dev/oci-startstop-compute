@@ -19,7 +19,6 @@
 - ocid1.instance.oc1.ap-singapore-1.anzwsljrk644ttqc7jub553aepgufjdx6kbuf2sl3jixbabt6yscdxw4z7nq
 ## Tokyo
 
-+ ocid1.instance.oc1.ap-tokyo-1.anxhiljrk644ttqcopia3urklef5wkrtzs5yyybacn5s2tauqyyae5z5s5sq
 
 ## Manual
 ```bash
