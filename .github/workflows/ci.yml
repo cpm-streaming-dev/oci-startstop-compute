@@ -9,8 +9,6 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
-  pull_request_target:
-    types: [assigned, unassigned, opened, synchronize, reopened, review_requested]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
