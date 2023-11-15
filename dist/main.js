@@ -53,47 +53,51 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         .map((line) => line.split('+ ')[1]);
     const sgOCI = new oci_1.default(oci_sdk_1.common.Region.AP_SINGAPORE_1);
     const tokyoOCI = new oci_1.default(oci_sdk_1.common.Region.AP_TOKYO_1);
-    for (const instance of sgInstances) {
-        const instanceState = yield sgOCI.getComputeClient().getInstance({
-            instanceId: instance,
-        });
-        content.push({
-            displayName: instanceState.instance.displayName,
-            instanceId: instanceState.instance.id,
-            lifecycleState: instanceState.instance.lifecycleState,
-            region: instanceState.instance.region,
-        });
-        (instanceState === null || instanceState === void 0 ? void 0 : instanceState.instance.lifecycleState) ===
-            oci_sdk_1.core.models.Instance.LifecycleState.Stopped
-            ? yield sgOCI.getComputeClient().instanceAction({
+    if (sgInstances.length || tokyoInstances.length !== 0) {
+        for (const instance of sgInstances) {
+            const instanceState = yield sgOCI.getComputeClient().getInstance({
                 instanceId: instance,
-                action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Start,
-            })
-            : yield sgOCI.getComputeClient().instanceAction({
-                instanceId: instance,
-                action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Softstop,
             });
+            content.push({
+                displayName: instanceState.instance.displayName,
+                instanceId: instanceState.instance.id,
+                lifecycleState: instanceState.instance.lifecycleState,
+                region: instanceState.instance.region,
+            });
+            (instanceState === null || instanceState === void 0 ? void 0 : instanceState.instance.lifecycleState) ===
+                oci_sdk_1.core.models.Instance.LifecycleState.Stopped
+                ? yield sgOCI.getComputeClient().instanceAction({
+                    instanceId: instance,
+                    action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Start,
+                })
+                : yield sgOCI.getComputeClient().instanceAction({
+                    instanceId: instance,
+                    action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Softstop,
+                });
+        }
     }
-    for (const instance of tokyoInstances) {
-        const instanceState = yield tokyoOCI.getComputeClient().getInstance({
-            instanceId: instance,
-        });
-        content.push({
-            displayName: instanceState.instance.displayName,
-            instanceId: instanceState.instance.id,
-            lifecycleState: instanceState.instance.lifecycleState,
-            region: instanceState.instance.region,
-        });
-        (instanceState === null || instanceState === void 0 ? void 0 : instanceState.instance.lifecycleState) ===
-            oci_sdk_1.core.models.Instance.LifecycleState.Stopped
-            ? yield tokyoOCI.getComputeClient().instanceAction({
+    if (tokyoInstances.length || tokyoInstances.length !== 0) {
+        for (const instance of tokyoInstances) {
+            const instanceState = yield tokyoOCI.getComputeClient().getInstance({
                 instanceId: instance,
-                action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Start,
-            })
-            : yield tokyoOCI.getComputeClient().instanceAction({
-                instanceId: instance,
-                action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Softstop,
             });
+            content.push({
+                displayName: instanceState.instance.displayName,
+                instanceId: instanceState.instance.id,
+                lifecycleState: instanceState.instance.lifecycleState,
+                region: instanceState.instance.region,
+            });
+            (instanceState === null || instanceState === void 0 ? void 0 : instanceState.instance.lifecycleState) ===
+                oci_sdk_1.core.models.Instance.LifecycleState.Stopped
+                ? yield tokyoOCI.getComputeClient().instanceAction({
+                    instanceId: instance,
+                    action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Start,
+                })
+                : yield tokyoOCI.getComputeClient().instanceAction({
+                    instanceId: instance,
+                    action: oci_sdk_1.core.requests.InstanceActionRequest.Action.Softstop,
+                });
+        }
     }
     yield (0, notify_1.sendNotify)(content);
     ctx.body = `Process Done. ${new Date().toString()}`;
