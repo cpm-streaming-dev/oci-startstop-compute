@@ -2,8 +2,8 @@ name: Tests
 on:
   push:
     branches: [master]
-  pull_request:
-    branches: [master]
+  pull_request_target:
+    types: [assigned, unassigned, opened, synchronize, reopened, review_requested]
 
   workflow_dispatch:
 
@@ -27,6 +27,20 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
         run: pnpm install
