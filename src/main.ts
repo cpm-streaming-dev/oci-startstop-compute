@@ -43,52 +43,56 @@ router.get('/cron', async (ctx: Koa.Context) => {
   const sgOCI = new Oci(common.Region.AP_SINGAPORE_1);
   const tokyoOCI = new Oci(common.Region.AP_TOKYO_1);
 
-  for (const instance of sgInstances) {
-    const instanceState = await sgOCI.getComputeClient().getInstance({
-      instanceId: instance,
-    });
+  if (sgInstances.length || tokyoInstances.length !== 0) {
+    for (const instance of sgInstances) {
+      const instanceState = await sgOCI.getComputeClient().getInstance({
+        instanceId: instance,
+      });
 
-    content.push({
-      displayName: instanceState.instance.displayName,
-      instanceId: instanceState.instance.id,
-      lifecycleState: instanceState.instance.lifecycleState,
-      region: instanceState.instance.region,
-    });
+      content.push({
+        displayName: instanceState.instance.displayName,
+        instanceId: instanceState.instance.id,
+        lifecycleState: instanceState.instance.lifecycleState,
+        region: instanceState.instance.region,
+      });
 
-    instanceState?.instance.lifecycleState ===
-    core.models.Instance.LifecycleState.Stopped
-      ? await sgOCI.getComputeClient().instanceAction({
-          instanceId: instance,
-          action: core.requests.InstanceActionRequest.Action.Start,
-        })
-      : await sgOCI.getComputeClient().instanceAction({
-          instanceId: instance,
-          action: core.requests.InstanceActionRequest.Action.Softstop,
-        });
+      instanceState?.instance.lifecycleState ===
+      core.models.Instance.LifecycleState.Stopped
+        ? await sgOCI.getComputeClient().instanceAction({
+            instanceId: instance,
+            action: core.requests.InstanceActionRequest.Action.Start,
+          })
+        : await sgOCI.getComputeClient().instanceAction({
+            instanceId: instance,
+            action: core.requests.InstanceActionRequest.Action.Softstop,
+          });
+    }
   }
 
-  for (const instance of tokyoInstances) {
-    const instanceState = await tokyoOCI.getComputeClient().getInstance({
-      instanceId: instance,
-    });
+  if (tokyoInstances.length || tokyoInstances.length !== 0) {
+    for (const instance of tokyoInstances) {
+      const instanceState = await tokyoOCI.getComputeClient().getInstance({
+        instanceId: instance,
+      });
 
-    content.push({
-      displayName: instanceState.instance.displayName,
-      instanceId: instanceState.instance.id,
-      lifecycleState: instanceState.instance.lifecycleState,
-      region: instanceState.instance.region,
-    });
+      content.push({
+        displayName: instanceState.instance.displayName,
+        instanceId: instanceState.instance.id,
+        lifecycleState: instanceState.instance.lifecycleState,
+        region: instanceState.instance.region,
+      });
 
-    instanceState?.instance.lifecycleState ===
-    core.models.Instance.LifecycleState.Stopped
-      ? await tokyoOCI.getComputeClient().instanceAction({
-          instanceId: instance,
-          action: core.requests.InstanceActionRequest.Action.Start,
-        })
-      : await tokyoOCI.getComputeClient().instanceAction({
-          instanceId: instance,
-          action: core.requests.InstanceActionRequest.Action.Softstop,
-        });
+      instanceState?.instance.lifecycleState ===
+      core.models.Instance.LifecycleState.Stopped
+        ? await tokyoOCI.getComputeClient().instanceAction({
+            instanceId: instance,
+            action: core.requests.InstanceActionRequest.Action.Start,
+          })
+        : await tokyoOCI.getComputeClient().instanceAction({
+            instanceId: instance,
+            action: core.requests.InstanceActionRequest.Action.Softstop,
+          });
+    }
   }
 
   await sendNotify(content as Content[]);
@@ -168,6 +172,7 @@ router.get('/tokyo', async (ctx: Koa.Context) => {
     .map((line) => line.split('+ ')[1]);
 
   const instances = tokyoInstances.map((line) => line.replace('\r', ''));
+
   ctx.body = instances;
 });
 

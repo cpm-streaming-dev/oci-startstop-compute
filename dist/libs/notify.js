@@ -17,7 +17,7 @@ const querystring_1 = __importDefault(require("querystring"));
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
 const sendNotify = (content) => __awaiter(void 0, void 0, void 0, function* () {
-    const url = "https://notify-api.line.me/api/notify";
+    const url = 'https://notify-api.line.me/api/notify';
     const jsonData = {
         message: ``,
     };
@@ -27,10 +27,10 @@ const sendNotify = (content) => __awaiter(void 0, void 0, void 0, function* () {
     const data = yield fetch(url, {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${process.env.LINE_NOTIFY_TOKEN}`,
-            'Content-Type': 'application/x-www-form-urlencoded'
+            Authorization: `Bearer ${process.env.LINE_NOTIFY_TOKEN}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: querystring_1.default.stringify(jsonData)
+        body: querystring_1.default.stringify(jsonData),
     });
     const x = yield data.json();
     console.log(x);
