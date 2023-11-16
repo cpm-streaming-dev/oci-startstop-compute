@@ -1,0 +1,13 @@
+addReviewers: true
+addAssignees: author
+
+assignees:
+  - Thiti_T
+  - thititongumpun
+
+reviewers:
+  - Thiti_T
+  - thititongumpun
+
+numberOfReviewers: 1
+numberOfAssignees: 1
