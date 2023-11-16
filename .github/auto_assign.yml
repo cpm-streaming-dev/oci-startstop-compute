@@ -1,5 +1,5 @@
 addReviewers: true
-addAssignees: author
+addAssignees: true
 
 assignees:
   - Thiti_T
@@ -9,5 +9,5 @@ reviewers:
   - Thiti_T
   - thititongumpun
 
-numberOfReviewers: 1
-numberOfAssignees: 1
+numberOfReviewers: 2
+numberOfAssignees: 2
