@@ -5,7 +5,10 @@ on:
 
 jobs:
   checkout:
-    permissions: write-all
+    permissions: 
+      contents: write
+      pull-requests: write
+      repository-projects: write
     runs-on: ubuntu-latest
     
     steps:
