@@ -3,12 +3,13 @@ on:
   push:
     branches: [master]
   pull_request_target:
-    types: [assigned, unassigned, opened, synchronize, reopened, review_requested]
+    types: [labeled]
 
   workflow_dispatch:
 
 jobs:
   build:
+    if: contains(github.event.pull_request.labels.*.name, 'safe to test')
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
