@@ -24,6 +24,9 @@ class Oci {
             terminationStrategy: new oci_sdk_1.common.MaxTimeTerminationStrategy(this.maxTimeInSeconds),
             delayStrategy: new oci_sdk_1.common.ExponentialBackoffDelayStrategy(this.maxDelayInSeconds),
         };
+        this.networkClient = new oci_sdk_1.core.VirtualNetworkClient({
+            authenticationDetailsProvider: provider,
+        });
     }
     getComputeClient() {
         return this.computeClient;
@@ -33,6 +36,9 @@ class Oci {
     }
     getWaiterConfiguration() {
         return this.waiterConfiguration;
+    }
+    getNetworkClient() {
+        return this.networkClient;
     }
 }
 exports.default = Oci;

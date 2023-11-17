@@ -7,6 +7,7 @@ class Oci {
   private computeClient: core.ComputeClient;
   private workRequestClient: WorkRequestClient;
   private waiterConfiguration: common.WaiterConfiguration;
+  private networkClient: core.VirtualNetworkClient;
   private maxTimeInSeconds = 60 * 60; // The duration for waiter configuration before failing. Currently set to 1 hour.
   private maxDelayInSeconds = 30; // The max delay for the waiter configuration. Currently set to 30 seconds
   private tenancy = process.env.TENANCY || '';
@@ -40,6 +41,9 @@ class Oci {
         this.maxDelayInSeconds
       ),
     };
+    this.networkClient = new core.VirtualNetworkClient({
+      authenticationDetailsProvider: provider,
+    });
   }
 
   public getComputeClient() {
@@ -52,6 +56,10 @@ class Oci {
 
   public getWaiterConfiguration() {
     return this.waiterConfiguration;
+  }
+
+  public getNetworkClient() {
+    return this.networkClient;
   }
 }
 

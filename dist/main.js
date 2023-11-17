@@ -27,7 +27,6 @@ const oci_1 = __importDefault(require("./oci"));
 const oci_sdk_1 = require("oci-sdk");
 const fs_1 = require("fs");
 const getListInstances_1 = require("./libs/getListInstances");
-const notify_1 = require("./libs/notify");
 (0, dotenv_1.config)();
 const port = process.env.PORT || 3000;
 exports.app = new koa_1.default();
@@ -41,7 +40,6 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         return ctx.throw(401, 'Unauthorized');
     }
     const res = yield fetch('https://raw.githubusercontent.com/cpm-streaming-dev/oci-startstop-compute/master/README.md');
-    const content = [];
     const text = yield res.text();
     const sgInstances = text
         .split('\n')
@@ -57,12 +55,6 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         for (const instance of sgInstances) {
             const instanceState = yield sgOCI.getComputeClient().getInstance({
                 instanceId: instance,
-            });
-            content.push({
-                displayName: instanceState.instance.displayName,
-                instanceId: instanceState.instance.id,
-                lifecycleState: instanceState.instance.lifecycleState,
-                region: instanceState.instance.region,
             });
             (instanceState === null || instanceState === void 0 ? void 0 : instanceState.instance.lifecycleState) ===
                 oci_sdk_1.core.models.Instance.LifecycleState.Stopped
@@ -81,12 +73,6 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
             const instanceState = yield tokyoOCI.getComputeClient().getInstance({
                 instanceId: instance,
             });
-            content.push({
-                displayName: instanceState.instance.displayName,
-                instanceId: instanceState.instance.id,
-                lifecycleState: instanceState.instance.lifecycleState,
-                region: instanceState.instance.region,
-            });
             (instanceState === null || instanceState === void 0 ? void 0 : instanceState.instance.lifecycleState) ===
                 oci_sdk_1.core.models.Instance.LifecycleState.Stopped
                 ? yield tokyoOCI.getComputeClient().instanceAction({
@@ -99,8 +85,9 @@ router.get('/cron', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
                 });
         }
     }
-    yield (0, notify_1.sendNotify)(content);
-    ctx.body = `Process Done. ${new Date().toString()}`;
+    ctx.body = {
+        message: `Process Done. ${new Date().toString()}`,
+    };
 }));
 router.get('/status', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, e_1, _b, _c;
@@ -177,6 +164,31 @@ router.get('/tokyo', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         .map((line) => line.split('+ ')[1]);
     const instances = tokyoInstances.map((line) => line.replace('\r', ''));
     ctx.body = instances;
+}));
+router.get('/ip', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    if (ctx.get('x-api-key') !== process.env.API_KEY) {
+        ctx.throw(401, 'Unauthorized');
+    }
+    const region = ctx.query.region === 'tokyo'
+        ? oci_sdk_1.common.Region.AP_TOKYO_1
+        : oci_sdk_1.common.Region.AP_SINGAPORE_1;
+    const oci = new oci_1.default(region);
+    const attachmentReq = {
+        compartmentId: process.env.COMPARTMENTID,
+        instanceId: ctx.query.instanceId,
+    };
+    const vcinResponse = yield oci
+        .getComputeClient()
+        .listVnicAttachments(attachmentReq);
+    const vcnReq = {
+        vcnId: vcinResponse.items[0].vnicId,
+    };
+    const response = yield oci.getNetworkClient().getVnic({
+        vnicId: vcnReq.vcnId,
+    });
+    ctx.body = {
+        publicIP: response.vnic.publicIp,
+    };
 }));
 exports.app.use(router.routes());
 exports.server = exports.app.listen(port, () => console.log(`Application is running on port ${port}`));
