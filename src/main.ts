@@ -5,7 +5,6 @@ import Oci from './oci';
 import { common, core } from 'oci-sdk';
 import { readFileSync } from 'fs';
 import { getListInstances } from './libs/getListInstances';
-import { Content, sendNotify } from './libs/notify';
 
 config();
 
@@ -27,8 +26,6 @@ router.get('/cron', async (ctx: Koa.Context) => {
     'https://raw.githubusercontent.com/cpm-streaming-dev/oci-startstop-compute/master/README.md'
   );
 
-  const content: Content[] = [];
-
   const text = await res.text();
   const sgInstances = text
     .split('\n')
@@ -47,13 +44,6 @@ router.get('/cron', async (ctx: Koa.Context) => {
     for (const instance of sgInstances) {
       const instanceState = await sgOCI.getComputeClient().getInstance({
         instanceId: instance,
-      });
-
-      content.push({
-        displayName: instanceState.instance.displayName,
-        instanceId: instanceState.instance.id,
-        lifecycleState: instanceState.instance.lifecycleState,
-        region: instanceState.instance.region,
       });
 
       instanceState?.instance.lifecycleState ===
@@ -75,13 +65,6 @@ router.get('/cron', async (ctx: Koa.Context) => {
         instanceId: instance,
       });
 
-      content.push({
-        displayName: instanceState.instance.displayName,
-        instanceId: instanceState.instance.id,
-        lifecycleState: instanceState.instance.lifecycleState,
-        region: instanceState.instance.region,
-      });
-
       instanceState?.instance.lifecycleState ===
       core.models.Instance.LifecycleState.Stopped
         ? await tokyoOCI.getComputeClient().instanceAction({
@@ -95,9 +78,9 @@ router.get('/cron', async (ctx: Koa.Context) => {
     }
   }
 
-  await sendNotify(content as Content[]);
-
-  ctx.body = `Process Done. ${new Date().toString()}`;
+  ctx.body = {
+    message: `Process Done. ${new Date().toString()}`,
+  };
 });
 
 router.get('/status', async (ctx: Koa.Context) => {
@@ -174,6 +157,38 @@ router.get('/tokyo', async (ctx: Koa.Context) => {
   const instances = tokyoInstances.map((line) => line.replace('\r', ''));
 
   ctx.body = instances;
+});
+
+router.get('/ip', async (ctx: Koa.Context) => {
+  if (ctx.get('x-api-key') !== process.env.API_KEY) {
+    ctx.throw(401, 'Unauthorized');
+  }
+  const region =
+    ctx.query.region === 'tokyo'
+      ? common.Region.AP_TOKYO_1
+      : common.Region.AP_SINGAPORE_1;
+  const oci = new Oci(region);
+
+  const attachmentReq: core.requests.ListVnicAttachmentsRequest = {
+    compartmentId: process.env.COMPARTMENTID as string,
+    instanceId: ctx.query.instanceId as string,
+  };
+
+  const vcinResponse = await oci
+    .getComputeClient()
+    .listVnicAttachments(attachmentReq);
+
+  const vcnReq: core.requests.GetVcnRequest = {
+    vcnId: vcinResponse.items[0].vnicId as string,
+  };
+
+  const response = await oci.getNetworkClient().getVnic({
+    vnicId: vcnReq.vcnId,
+  });
+
+  ctx.body = {
+    publicIP: response.vnic.publicIp,
+  };
 });
 
 app.use(router.routes());
