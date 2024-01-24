@@ -15,8 +15,8 @@
 ## Singapore
 
 - ocid1.instance.oc1.ap-singapore-1.anzwsljrk644ttqcbsuzb5i34owl7zkwexpehfsweqrpbgbkdjkh34ubzuvq
-- ocid1.instance.oc1.ap-singapore-1.anzwsljrk644ttqci6oacrgenwsfge4qdknq26uc64ye2u25vkrqrub4hq4q
 - ocid1.instance.oc1.ap-singapore-1.anzwsljrk644ttqc7jub553aepgufjdx6kbuf2sl3jixbabt6yscdxw4z7nq
+- ocid1.instance.oc1.ap-singapore-1.anzwsljrk644ttqcymfj6xgr3rbnf7gqclxbvsikwiqheax3u6p7v2ec7buq
 
 ## Tokyo
 
