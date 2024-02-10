@@ -19,7 +19,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.server = exports.app = void 0;
+exports.app = void 0;
 const koa_1 = __importDefault(require("koa"));
 const koa_router_1 = __importDefault(require("koa-router"));
 const dotenv_1 = require("dotenv");
@@ -191,4 +191,4 @@ router.get('/ip', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     };
 }));
 exports.app.use(router.routes());
-exports.server = exports.app.listen(port, () => console.log(`Application is running on port ${port}`));
+exports.app.listen(port, () => console.log(`Application is running on port ${port}`));
