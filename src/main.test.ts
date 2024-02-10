@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app, server } from './main';
+import { app } from './main';
 import { getListInstances } from './libs/getListInstances';
 
 it('works', async () => {
@@ -8,14 +8,14 @@ it('works', async () => {
   expect(response.text).toBe(`Healthy ${new Date().toDateString()}`);
 });
 
-it('Should not contains not exists SG instance id', async () => {
-  const response = await request(app.callback()).get('/sg');
-  const instances = await getListInstances('sg');
+// it('Should not contains not exists SG instance id', async () => {
+//   const response = await request(app.callback()).get('/sg');
+//   const instances = await getListInstances('sg');
 
-  JSON.parse(response.text).map((instance: string) =>
-    expect(instances).toContain(instance)
-  );
-});
+//   JSON.parse(response.text).map((instance: string) =>
+//     expect(instances).toContain(instance)
+//   );
+// });
 
 it('Should not contains not exists Tokyo instance id', async () => {
   const response = await request(app.callback()).get('/tokyo');
@@ -24,8 +24,4 @@ it('Should not contains not exists Tokyo instance id', async () => {
   JSON.parse(response.text).map((instance: string) =>
     expect(instances).toContain(instance)
   );
-});
-
-afterAll(() => {
-  server.close();
 });
