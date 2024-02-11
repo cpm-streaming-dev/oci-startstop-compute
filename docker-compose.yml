@@ -1,0 +1,20 @@
+version: '3.9'
+
+services:
+  jenkins:
+    image: oci-jobmanager
+    container_name: oci-jobmanager
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      VIRTUAL_PORT: 3000
+      VIRTUAL_HOST: oci-jobmanager.wcydtt.co
+      LETSENCRYPT_HOST: oci-jobmanager.wcydtt.co
+    networks:
+      - proxy
+      
+networks:
+  proxy:
+    name: proxy
+    external: true

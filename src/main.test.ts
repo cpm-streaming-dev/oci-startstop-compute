@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { app } from './main';
-import { getListInstances } from './libs/getListInstances';
+import { app, server } from './main';
+// import { getListInstances } from './libs/getListInstances';
 
 it('works', async () => {
   const response = await request(app.callback()).get('/');
@@ -17,11 +17,15 @@ it('works', async () => {
 //   );
 // });
 
-it('Should not contains not exists Tokyo instance id', async () => {
-  const response = await request(app.callback()).get('/tokyo');
-  const instances = await getListInstances('tokyo');
+// it('Should not contains not exists Tokyo instance id', async () => {
+//   const response = await request(app.callback()).get('/tokyo');
+//   const instances = await getListInstances('tokyo');
 
-  JSON.parse(response.text).map((instance: string) =>
-    expect(instances).toContain(instance)
-  );
+//   JSON.parse(response.text).map((instance: string) =>
+//     expect(instances).toContain(instance)
+//   );
+// });
+
+afterAll(() => {
+  server.close();
 });

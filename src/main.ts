@@ -193,4 +193,6 @@ router.get('/ip', async (ctx: Koa.Context) => {
 
 app.use(router.routes());
 
-app.listen(port, () => console.log(`Application is running on port ${port}`));
+export const server = app.listen(port, () =>
+  console.log(`Application is running on port ${port}`)
+);
