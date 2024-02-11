@@ -1,0 +1,24 @@
+name: Trigger Start Stop Instance
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'
+    - cron: '0 17 * * 5'
+  workflow_dispatch:
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call endpoint to trigger
+        shell: bash
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+        run: |
+          curl 'https://oci-jobmanager.wcydtt.co'
+
+
+# curl --location --request POST 'https://oci-jobmanager.wcydtt.co' \
+# --header "x-api-key: $X_API_KEY" \
+# --header 'Accept: application/json' \
+# --header 'Content-Type: application/json'
