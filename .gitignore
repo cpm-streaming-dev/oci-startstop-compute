@@ -2,3 +2,4 @@
 node_modules
 
 cron.json
+coverage

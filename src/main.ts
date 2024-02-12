@@ -5,6 +5,7 @@ import Oci from './oci';
 import { common, core } from 'oci-sdk';
 import { readFileSync } from 'fs';
 import { getListInstances } from './libs/getListInstances';
+import { Instance } from './types/Instances';
 
 config();
 
@@ -87,7 +88,7 @@ router.get('/status', async (ctx: Koa.Context) => {
   if (ctx.get('x-api-key') !== process.env.API_KEY) {
     ctx.throw(401, 'Unauthorized');
   }
-  const instances = [];
+  const instances: Instance[] = [];
   const region =
     ctx.query.region === 'tokyo'
       ? common.Region.AP_TOKYO_1
