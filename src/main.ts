@@ -4,12 +4,12 @@ import { config } from 'dotenv';
 import Oci from './oci';
 import { common, core } from 'oci-sdk';
 import { readFileSync } from 'fs';
-import { getListInstances } from './libs/getListInstances';
+import { getListInstances } from './lib/getListInstances';
 import { Instance } from './types/Instances';
 
 config();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT ?? 3000;
 
 export const app = new Koa();
 const router: Router = new Router();

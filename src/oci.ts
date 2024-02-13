@@ -5,10 +5,10 @@ config();
 class Oci {
   private computeClient: core.ComputeClient;
   private networkClient: core.VirtualNetworkClient;
-  private tenancy = process.env.TENANCY || '';
-  private user = process.env.USERID || '';
-  private fingerprint = process.env.FINGERPRINT || '';
-  private passphrase = process.env.PASSPHRASE || null; // optional parameter
+  private tenancy = process.env.TENANCY ?? '';
+  private user = process.env.USERID ?? '';
+  private fingerprint = process.env.FINGERPRINT ?? '';
+  private passphrase = process.env.PASSPHRASE ?? null; // optional parameter
   private privateKey = Buffer.from(
     process.env.SECRET_KEY as string,
     'base64'

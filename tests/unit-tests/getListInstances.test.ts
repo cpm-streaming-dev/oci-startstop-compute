@@ -1,4 +1,4 @@
-import { getListInstances } from './getListInstances';
+import { getListInstances } from '../../src/lib/getListInstances';
 
 it('List SG instances', async () => {
   const instances = await getListInstances('sg');

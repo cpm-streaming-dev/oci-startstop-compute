@@ -1,36 +1,32 @@
 import request from 'supertest';
-import { app, server } from './main';
-import { getListInstances } from './libs/getListInstances';
-import { Instance } from './types/Instances';
+import { server } from '../../src/main';
+import { getListInstances } from '../../src/lib/getListInstances';
+import { Instance } from '../../src/types/Instances';
 
 it('works', async () => {
-  const response = await request(app.callback()).get('/');
+  const response = await request(server).get('/');
   expect(response.status).toBe(200);
   expect(response.text).toBe(`Healthy ${new Date().toDateString()}`);
 });
 
 describe('Cron', () => {
   it('Cron should return unauthorize', async () => {
-    await request(app.callback())
+    await request(server)
       .get('/cron')
       .set({ 'x-api-key': 'invalid key' })
       .expect(401);
   });
-  // it('Cron should return 200', async () => {
-  //   const response = await request(app.callback()).get('/cron').set({ 'x-api-key': process.env.API_KEY as string });
-  //   expect(response.status).toBe(200);
-  // });
 });
 
 describe('Get Instance IP', () => {
   it('Get instance ip should return unauthorize', async () => {
-    await request(app.callback())
+    await request(server)
       .get('/ip')
       .set({ 'x-api-key': 'invalid key' })
       .expect(401);
   });
   it('Should return public Ip', async () => {
-    const response = await request(app.callback())
+    const response = await request(server)
       .get('/ip')
       .set({ 'x-api-key': process.env.API_KEY as string });
     const expectedIp = { publicIP: '138.2.93.60' };
@@ -41,13 +37,13 @@ describe('Get Instance IP', () => {
 
 describe('Get List Instances status', () => {
   it('List all instances should return unauthorize', async () => {
-    await request(app.callback())
+    await request(server)
       .get('/status')
       .set({ 'x-api-key': 'invalid key' })
       .expect(401);
   });
   it('List all instances should', async () => {
-    const response = await request(app.callback())
+    const response = await request(server)
       .get('/status')
       .query({ region: 'sg' })
       .set({ 'x-api-key': process.env.API_KEY as string });
@@ -61,14 +57,14 @@ describe('Get List Instances status', () => {
 describe('Get List Instances', () => {
   describe('List Tokyo Instances', () => {
     it('List all tokyo instances', async () => {
-      const response = await request(app.callback()).get('/tokyo');
+      const response = await request(server).get('/tokyo');
       const instances = await getListInstances('tokyo');
       JSON.parse(response.text).map((instance: string) =>
         expect(instances).toContain(instance)
       );
     });
     it('List all singapore instances', async () => {
-      const response = await request(app.callback()).get('/sg');
+      const response = await request(server).get('/sg');
       const instances = await getListInstances('sg');
 
       JSON.parse(response.text).map((instance: string) =>
@@ -80,7 +76,7 @@ describe('Get List Instances', () => {
 
 describe('Task', () => {
   it('Should return process dont when run manual task', async () => {
-    const response = await request(app.callback())
+    const response = await request(server)
       .get('/task')
       .query({
         region: 'tokyo',
@@ -93,7 +89,7 @@ describe('Task', () => {
     expect(response.text).toBe('Process Done');
   });
   it('Should return unauthorize', async () => {
-    await request(app.callback())
+    await request(server)
       .get('/task')
       .query({
         region: 'tokyo',
