@@ -13,9 +13,9 @@ jobs:
       - name: Call endpoint to trigger
         shell: bash
         env:
-          API_KEY: ${{ secrets.APIKEY }}
+          API_KEY: ${{ secrets.API_KEY }}
         run: |
           curl --location 'https://oci-jobmanager.wcydtt.co/cron' \
-            --header "x-api-key: $API_KEY" \
+            --header "x-api-key: 2353c92ba586c91cffa674d2b6bfda81174f99e38fac144ba45a394ae6d55d9d" \
             --header 'Accept: application/json' \
             --header 'Content-Type: application/json'
