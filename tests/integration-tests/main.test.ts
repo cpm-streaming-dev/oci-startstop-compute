@@ -84,6 +84,7 @@ describe('Task', () => {
           'ocid1.instance.oc1.ap-tokyo-1.anxhiljrk644ttqclh6le6oiai7dceh2pjzl6dplvmgnxu3o5m3nznhiu7eq',
         action: 'stop',
       })
+      .set({ 'x-api-key': 'invalid key' })
       .expect(401);
   });
   it('Should return process dont when run manual task', async () => {

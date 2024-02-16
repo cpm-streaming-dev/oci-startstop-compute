@@ -2,7 +2,7 @@ addReviewers: true
 addAssignees: author
 
 reviewers:
-  - Thiti_T
   - thititongumpun
+  - Thiti_T
 
 numberOfReviewers: 2
