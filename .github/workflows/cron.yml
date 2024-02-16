@@ -16,7 +16,7 @@ jobs:
           X_API_KEY: ${{ secrets.X_API_KEY }}
         run: |
           curl --location --request POST 'https://oci-jobmanager.wcydtt.co/cron' \
-          --header "x-api-key: $API_KEY" \
+          --header "x-api-key: $X_API_KEY" \
           --header 'Accept: application/json' \
           --header 'Content-Type: application/json'
 
