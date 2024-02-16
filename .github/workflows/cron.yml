@@ -16,6 +16,6 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
         run: |
           curl --location 'https://oci-jobmanager.wcydtt.co/status' \
-            --header 'x-api-key: 2353c92ba586c91cffa674d2b6bfda81174f99e38fac144ba45a394ae6d55d9d' \
+            --header "x-api-key: $API_KEY" \
             --header 'Accept: application/json' \
             --header 'Content-Type: application/json'
