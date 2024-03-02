@@ -27,9 +27,11 @@ describe('Get Instance IP', () => {
   });
   it('Should return public Ip', async () => {
     const response = await request(server)
-      .get('/ip')
+      .get(
+        '/ip?instanceId=ocid1.instance.oc1.ap-singapore-1.anzwsljrk644ttqc7jub553aepgufjdx6kbuf2sl3jixbabt6yscdxw4z7nq&region=sg'
+      )
       .set({ 'x-api-key': process.env.API_KEY as string });
-    const expectedIp = { publicIP: '138.2.93.60' };
+    const expectedIp = { publicIP: '138.2.78.77' };
 
     expect(JSON.parse(response.text)).toEqual(expectedIp);
   });
