@@ -3,7 +3,7 @@ name: Trigger Start Stop Instance
 on:
   schedule:
     - cron: '0 0 * * 1'
-    - cron: '0 17 * * 5'
+    - cron: '0 17 * * 6'
   workflow_dispatch:
 
 jobs:
