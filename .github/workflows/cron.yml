@@ -1,21 +1,21 @@
-name: Trigger Start Stop Instance
+# name: Trigger Start Stop Instance
 
-on:
-  schedule:
-    - cron: '0 0 * * 1-5'
-    - cron: '0 15 * * 1-5'
-  workflow_dispatch:
+# on:
+#   schedule:
+#     - cron: '0 0 * * 1-5'
+#     - cron: '0 15 * * 1-5'
+#   workflow_dispatch:
 
-jobs:
-  execute:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Call endpoint to trigger
-        shell: bash
-        env:
-          API_KEY: ${{ secrets.API_KEY }}
-        run: |
-          curl --location 'https://oci-jobmanager.wcydtt.co/cron' \
-            --header "Authorization: Bearer $API_KEY" \
-            --header 'Accept: application/json' \
-            --header 'Content-Type: application/json'
+# jobs:
+#   execute:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Call endpoint to trigger
+#         shell: bash
+#         env:
+#           API_KEY: ${{ secrets.API_KEY }}
+#         run: |
+#           curl --location 'https://oci-jobmanager.wcydtt.co/cron' \
+#             --header "Authorization: Bearer $API_KEY" \
+#             --header 'Accept: application/json' \
+#             --header 'Content-Type: application/json'
