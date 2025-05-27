@@ -13,8 +13,8 @@
 > Tokyo เติม + ตามด้วย instance_id
 
 ## Singapore
-
-- ocid1.instance.oc1.ap-singapore-1.anzwsljrk644ttqc7jub553aepgufjdx6kbuf2sl3jixbabt6yscdxw4z7nq
+<!-- streaming-dev VM -->
+<!-- - ocid1.instance.oc1.ap-singapore-1.anzwsljrk644ttqc7jub553aepgufjdx6kbuf2sl3jixbabt6yscdxw4z7nq -->
 - ocid1.instance.oc1.ap-singapore-1.anzwsljrk644ttqco326ltirhx7tssc5phkc4qefevu4bv3deselgiuympkq
 
 ## Tokyo
